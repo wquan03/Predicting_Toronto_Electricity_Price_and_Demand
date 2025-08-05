@@ -1,0 +1,12 @@
+{
+    "learning_rate": "invscaling",
+    "hidden_layer_sizes": [
+        5,
+        250,
+        250,
+        50
+    ],
+    "batch_size": 128,
+    "alpha": 0.1,
+    "activation": "tanh"
+}
