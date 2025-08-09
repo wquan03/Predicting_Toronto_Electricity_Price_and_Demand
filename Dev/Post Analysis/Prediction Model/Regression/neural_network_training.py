@@ -25,10 +25,16 @@ feature_lst.remove(var.toront_demand)
 feature_lst.remove(var.toronto_price)
 feature_lst.remove(var.ontario_demand)
 feature_lst.remove('Date')
+
+# feature_lst = [var.ontario_supply, var.toronto_temp, var.gas_price, var.month]
 df = df[[var.toront_demand, var.toronto_price] + feature_lst]
 
 # Create X and y
 X = df.drop(columns=[var.toronto_price, var.toront_demand])
+print("The following are my features")
+print(X.columns)
+
+
 # y = df[var.toront_demand].values
 y = df[var.toronto_price].values
 
@@ -59,15 +65,28 @@ param_grid = {
 
 ### --- Training a Neural Network Model ---
 # Define model
-model = MLPRegressor(max_iter=10000, solver='adam', random_state=42, verbose=True)
+# model = MLPRegressor(max_iter=10000, solver='adam', random_state=42, verbose=True)
+
+model = MLPRegressor(
+    hidden_layer_sizes=(64, 32),
+    activation='relu',
+    alpha=0.001,
+    learning_rate='adaptive',
+    batch_size=32,
+    solver='adam',
+    max_iter=10000,
+    random_state=42
+)
 
 # Hyperparameter search
 searcher = RandomizedSearchCV(model, param_distributions=param_grid, scoring='r2', n_iter=20, cv=3, n_jobs=-1, verbose=3)
+# searcher = RandomizedSearchCV(estimator=model, n_jobs=-1, cv=3, param_distributions=param_grid, scoring="r2", verbose=3)
 searchResults = searcher.fit(X_train_scaled, y_train_scaled)
 
 # Save best parameters
 best_params = searchResults.best_params_
-with open(var.model_output + "best_nn_params.json", "w") as f:
+with open(var.model_output + "best_nn_params_for_price.json", "w") as f:
+# with open(var.model_output + "best_nn_params_for_demand.json", "w") as f:
     json.dump(best_params, f, indent=4)
 
 print("Best Parameters Saved:", best_params)

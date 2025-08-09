@@ -19,19 +19,14 @@ from utilities import utililty as util
 df = pd.read_excel(var.anaylsis_output + 'all_field_data_daily.xlsx', sheet_name = 'All Data Fields')
 
 # Define the features
-feature_lst = df.columns.tolist()
-feature_lst.remove(var.toront_demand)
-feature_lst.remove(var.toronto_price)
-feature_lst.remove(var.ontario_demand)
-feature_lst.remove('Date')
+# feature_lst = df.columns.tolist()
+# feature_lst.remove(var.toront_demand)
+# feature_lst.remove(var.toronto_price)
+# feature_lst.remove(var.ontario_demand)
+# feature_lst.remove('Date')
+
+feature_lst = [var.ontario_supply, var.toronto_temp, var.gas_price, var.month]
 df = df[[var.toront_demand, var.toronto_price] + feature_lst]
-
-# add day of week features
-# df['DayOfWeek'] = df['Date'].dt.dayofweek
-# df['IsWeekend'] = df['DayOfWeek'] >= 5
-# df['TempSquared'] = df[var.toronto_temp] ** 2
-# df['PrevDayDemand'] = df[var.toront_demand].shift(1)
-
 
 X = df.drop(columns=[var.toronto_price, var.toront_demand])
 print("The following are my features")
@@ -77,13 +72,6 @@ param_grid = dict(
 )
 
 ### --- Train a neural network ---
-# model = MLPRegressor(
-#     hidden_layer_sizes=(5,5,5),
-#     activation='relu',
-#     solver='adam',
-#     max_iter=10000,
-#     random_state=42)
-
 model = MLPRegressor(
     hidden_layer_sizes=(64, 32),
     activation='relu',
@@ -107,18 +95,6 @@ model = best_xgb_model = searchResults.best_estimator_
 print("[INFO] best score is {:.2f} using {}".format(bestScore, bestParams))
 print()
 
-# temporary code to skip training
-# model = MLPRegressor(hidden_layer_sizes=(50, 100, 25),
-#                      learning_rate = 'constant',
-#                      activation='relu',
-#                      batch_size = 32,
-#                      solver='adam',
-#                      max_iter=10000,
-#                      random_state=42)
-# model.fit(X_train_scaled, y_train_scaled)
-# {'learning_rate': 'constant', 'hidden_layer_sizes': (50, 100, 25), 'batch_size': 32}
-
-
 # 6. Make predictions on the test set
 y_pred_scaled = model.predict(X_test_scaled)
 y_pred = y_scaler.inverse_transform(y_pred_scaled.reshape(-1, 1)).ravel()
@@ -135,7 +111,8 @@ print(f"R-squared (R2) with testing set: {r2:.2f}")
 print()
 
 ### --- Prediction ---
-predict_data = [15707.64651, 5.32, 11.71, 84.8, 9.1, 15.62, 100.98, 4.4, 0.6, 4.8, 0, 7.4, 2003, 5, 1, 3, 0, 137.1241, 0, 4861000]
+# predict_data = [15707.64651, 5.32, 11.71, 84.8, 9.1, 15.62, 100.98, 4.4, 0.6, 4.8, 0, 7.4, 2003, 5, 1, 3, 0, 137.1241, 0, 4861000]
+predict_data = [15707.64651, 11.71, 5.32, 5]
 # print(len(predict_data))
 # print(len(feature_lst))
 # print(feature_lst)
