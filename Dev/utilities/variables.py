@@ -1,10 +1,9 @@
-import pandas as pd
-import os
+import git
 
 
-base_root = 'C:\\Users\\CGOD\\Desktop\\University\\ROP\\IESO MRP Data\\'
-base_input = base_root + 'Input & Output\\Input\\'
-base_output = base_root + 'Input & Output\\Output\\'
+base_root = git.Repo('.', search_parent_directories=True).working_tree_dir
+base_input = base_root + '\\Input & Output\\Input\\'
+base_output = base_root + '\\Input & Output\\Output\\'
 
 demand_input = base_input + 'Demand\\'
 demand_output = base_output + 'Demand\\'
