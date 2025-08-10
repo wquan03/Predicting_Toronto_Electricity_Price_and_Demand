@@ -21,7 +21,7 @@ df_demand = df_demand[['Date', 'Hour', 'Ontario Demand', 'Toronto']]
 df_demand = df_demand.rename(columns = {'Toronto': 'Toronto Demand'})
 
 # Combining date with hour
-df_demand['Date'] = pd.to_datetime(df_demand['Date'])
+df_demand['Date'] = pd.to_datetime(df_demand['Date'], format='ISO8601')
 df_demand['Date'] = df_demand['Date'] + pd.to_timedelta(df_demand['Hour'], unit='h')
 df_demand = df_demand.drop('Hour', axis = 1)
 
@@ -39,4 +39,3 @@ with pd.ExcelWriter(var.demand_output + 'toronto_demand_time_series_data.xlsx') 
     df_demand_daily.to_excel(writer, sheet_name='daily average')
     df_demand_monthly.to_excel(writer, sheet_name='monthly average')
 print(df_demand)
-
